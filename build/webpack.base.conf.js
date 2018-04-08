@@ -37,16 +37,31 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
-      'jquery': 'jquery' 
+      'jquery': 'jquery',
+      'components': path.resolve(__dirname, '../src/components'),
+      'views': path.resolve(__dirname, '../src/views'),
+      'styles': path.resolve(__dirname, '../src/styles'),
+      'api': path.resolve(__dirname, '../src/api'),
+      'utils': path.resolve(__dirname, '../src/utils'),
+      'store': path.resolve(__dirname, '../src/store'),
+      'router': path.resolve(__dirname, '../src/router'),
+      'static': path.resolve(__dirname, '../static')
     }
   },
   module: {
     rules: [
-      ...(config.dev.useEslint ? [createLintingRule()] : []),
+   //   ...(config.dev.useEslint ? [createLintingRule()] : []),
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-        options: vueLoaderConfig
+   //     options: vueLoaderConfig
+        options: {
+        	loaders: {
+        		css : 'css-loader',
+                scss: 'style-loader!css-loader!sass-loader',
+                sass: 'style-loader!css-loader!sass-loader?indentedSyntax',
+            }
+        }
       },
       {
         test: /\.js$/,
@@ -76,7 +91,12 @@ module.exports = {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
-      }
+      },
+      {
+          test: /\.js$/,
+          loader: 'babel-loader?cacheDirectory',
+          include: [resolve('src'), resolve('test')]
+        }
     ]
   },
   node: {
@@ -93,8 +113,8 @@ module.exports = {
   },
   plugins: [
 	  new webpack.ProvidePlugin({
-	    $: "jquery",
-	    jQuery: "jquery"
+	      jQuery: "jquery",
+	      $: "jquery"
 	  })
-	]
+	 ]
 }

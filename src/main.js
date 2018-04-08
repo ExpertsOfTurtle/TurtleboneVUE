@@ -3,16 +3,23 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import '../static/leftmenu/js/jquery.min.js'
-import '../static/leftmenu/js/nav.js'
-import '../static/leftmenu/css/nav.css'
-import '../static/leftmenu/font/iconfont.css'
+import store from './store'
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+import './icons' // icon
+import * as filters from './filters' // 全局filter
+//import './permission' // 权限
+//import './element-variables.scss'
+
+Vue.use(ElementUI);
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
-  template: '<App/>',
-  components: { App }
+  store,
+  components: { App },
+  template: '<App/>'
 })
