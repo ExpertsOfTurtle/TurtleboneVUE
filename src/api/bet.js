@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function createBet(data) {
   return request({
-    url: 'http://turtlebone.top/bet/bet/createBet',
+    url: 'bet/bet/createBet',
     method: 'POST',
     data: data
   })
@@ -10,14 +10,14 @@ export function createBet(data) {
 
 export function listBet(data) {
 	return request({
-		url: 'http://turtlebone.top/bet/bet/listBet',
+		url: 'bet/bet/listBet',
 		method: 'POST'
   })
 }
 
 export function inputBet(data) {
 	return request({
-		url: 'http://turtlebone.top/bet/bet/inputBet',
+		url: 'bet/bet/inputBet',
 		method: 'POST',
 		data : data
   })
@@ -25,7 +25,14 @@ export function inputBet(data) {
 
 export function queryBet(bid) {
 	return request({
-		url: 'http://turtlebone.top/bet/bet/queryBet/' + bid,
+		url: 'bet/bet/queryBet/' + bid,
+		method: 'POST'
+  })
+}
+
+export function deleteBet(bid) {
+	return request({
+		url: 'bet/bet/deleteBet/' + bid,
 		method: 'POST'
   })
 }

@@ -64,6 +64,7 @@
     	<div slot="footer" class="dialog-footer">
         	<el-button @click="dialogInputVisible = false">取消</el-button>
         	<el-button v-if="dialogStatus=='create'" type="primary" @click="insertCFTask">确认</el-button>
+        	<el-button v-if="dialogStatus=='view'" type="danger" @click="deleteCFTask">删除</el-button>
       	</div>
       	
     </el-dialog>
@@ -71,7 +72,7 @@
 </template>
 
 <script>
-import {filter, createTask} from '@/api/cf'
+import {filter, createTask, deleteTask} from '@/api/cf'
 
 export default {
   data() {
@@ -91,12 +92,14 @@ export default {
       	deadline:null
       },
       deadline:null,
+      total:null,
       list:null,
       listQuery: {
         page: 1,
         limit: 5,
         ipList:null
-      }
+      },
+      myapp:null
     }
   },
   filters: {
@@ -110,6 +113,7 @@ export default {
     }
   },
   created() {
+  	this.myapp = this;
     //console.log(countTo);
     this.getList();
   },
@@ -132,8 +136,11 @@ export default {
   		}
   		filter(data).then(response => {	        
 	        that.listLoading = false
-	        that.list = response.list
 	        that.total = response.total
+	        console.log("Total:" + that.total);
+	        if (that.total > 0) {
+	        	that.list = response.list
+	        }
 	    }).catch(function (error) {
 		    that.listLoading = false
 		    that.total = 0
@@ -158,11 +165,12 @@ export default {
    	handleCreate() {
    		this.cleanTask();
    		this.dialogInputVisible = true
+   		this.dialogStatus = 'create'
    	},
    	handleInput(row) {
    		this.dialogInputVisible = true
    		this.cfform = Object.assign({}, row) // copy obj
-   		
+   		this.dialogStatus = 'view'
    	},
    	handleCurrentChange(val) {
     	this.listQuery.page = val
@@ -181,10 +189,52 @@ export default {
    		var that = this
    		that.listLoading = true
    		var data = that.cfform
-   		createTask(data).then(response => {	        
-	        that.listLoading = false
-	        that.dialogFormVisible = false
+   		var msg = '你成功惩罚了' + that.cfform.username
+   		createTask(data).then(response => {	   
+   			that.listLoading = false
+	        that.dialogInputVisible = false
+	        if (response == "OK"){
+	   			that.$message({
+			       message: msg,
+			       type: 'success'
+			    })
+			} else {
+				that.$message({
+			       message: response,
+			       type: 'error'
+			    })
+			}
+	        that.getList();
 	    }).catch(function (error) {
+	    	console.log("Fail");
+	    	var msg = '不知道为什么失败了'
+   			that.$message({
+		       message: msg,
+		       type: 'error'
+		    })
+		    that.listLoading = false
+		})
+   	},
+   	deleteCFTask(){
+   		var that = this
+   		var id = this.cfform.id
+   		deleteTask(id).then(response => {	   
+   			that.listLoading = false
+	        that.dialogInputVisible = false
+	        that.getList();
+	        if (response == "1"){
+	        	that.$message({
+			       message: '成功解除对 ' + that.cfform.username + ' 的惩罚' + that.cfform.amount + ' 题',
+			       type: 'success'
+			    })
+	        } else {
+	        	that.$message({
+			       message: response,
+			       type: 'error'
+			    })
+			}
+	    }).catch(function (error) {
+	    	console.log("Fail");
 		    that.listLoading = false
 		})
    	},

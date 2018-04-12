@@ -1,6 +1,5 @@
 <template>
   <div class="app-container">
-	  <countTo :startVal='startVal' :endVal='endVal' :duration='1000'></countTo>
 	  <el-button type="primary" @click="handleCreate">Add</el-button>
 	  
 	  <el-table :data="betList" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row>
@@ -46,9 +45,6 @@
     </el-dialog>
     
     <el-dialog title="Input" :visible.sync="dialogInputVisible">
-    	<div class="filter-container">
-        	<el-button type="primary" @click="inputBetData">确认</el-button>
-      	</div>
     	<el-form ref="dataForm" :model="betInput" label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'>
     		<el-form-item :label="'Username'">
     			<el-input v-model="betInput.username"></el-input>
@@ -74,6 +70,7 @@
     	<div slot="footer" class="dialog-footer">
         	<el-button @click="dialogInputVisible = false">取消</el-button>
         	<el-button v-if="dialogStatus=='create'" type="primary" @click="inputBetData">确认</el-button>
+        	<el-button type="danger" @click="onDeleteBet">Delete</el-button>
       	</div>
       	
       	<el-table v-if="betResult" :data="betResult" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row>
@@ -99,11 +96,9 @@
 </template>
 
 <script>
-import countTo from '@/components/CountTo/vue-countTo'
-import {createBet, listBet, inputBet, queryBet} from '@/api/bet'
+import {createBet, listBet, inputBet, queryBet, deleteBet} from '@/api/bet'
 
 export default {
-  components: { countTo },
   data() {
     return {
       startVal: 0,
@@ -192,6 +187,7 @@ export default {
    		createBet(data).then(response => {	        
 	        that.listLoading = false
 	        that.dialogFormVisible = false
+	        that.loadAllBet();
 	    }).catch(function (error) {
 		    that.listLoading = false
 		})
@@ -204,6 +200,19 @@ export default {
    		inputBet(data).then(response => {	        
 	        that.listLoading = false
 	        that.dialogInputVisible = false
+	        that.loadAllBet();
+	    }).catch(function (error) {
+		    that.listLoading = false
+		})
+   	},
+   	onDeleteBet() {
+   		var that = this
+   		that.listLoading = true
+   		that.betInput.bid = that.betInfo.id
+   		deleteBet(that.betInput.bid).then(response => {	        
+	        that.listLoading = false
+	        that.dialogInputVisible = false
+	        that.loadAllBet();
 	    }).catch(function (error) {
 		    that.listLoading = false
 		})
