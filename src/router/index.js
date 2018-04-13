@@ -121,6 +121,14 @@ export const constantRouterMap = [{
 			title: 'CF',
 			icon: 'form'
 		}
+	},{
+		path: 'submission',
+		name: 'Submission',
+		component: ()=>import('@/views/turtle/submission'),
+		meta: {
+			title: 'submission',
+			icon: 'form'
+		}
 	}]
 },
 {

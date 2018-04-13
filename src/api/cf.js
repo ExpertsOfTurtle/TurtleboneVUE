@@ -22,3 +22,10 @@ export function deleteTask(id) {
 		method: 'POST'
   })
 }
+export function filterSubmission(data) {
+	return request({
+	  url: 'cf/cf/filter',
+	  method: 'POST',
+	  data: data
+  })
+}
