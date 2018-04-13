@@ -1,20 +1,27 @@
 <template>
   <div class="app-container">
 	  <div class="filter-container">
-	  	  <el-input clearable @keyup.enter.native="handleFilter" style="width: 150px;" class="filter-item" placeholder="Username" v-model="listQuery.username">
-	      </el-input>
-	      <el-select clearable style="width: 90px" class="filter-item" v-model="listQuery.status" placeholder="Status">
+	  	 <!-- <el-input clearable @keyup.enter.native="handleFilter" style="width: 150px;" class="filter-item" placeholder="Username" v-model="listQuery.username">
+	      </el-input>-->
+	      <el-select clearable style="width: 200px" class="filter-item" v-model="listQuery.username" placeholder="Username">
+	      	<el-option v-for="item in userOptions" :key="item" :label="item | userFilter" :value="item">
+	        </el-option>
+	      </el-select>
+	      <el-select clearable style="width: 120px" class="filter-item" v-model="listQuery.status" placeholder="Status">
 	        <el-option v-for="item in statusOptions" :key="item" :label="item | statusFilter" :value="item">
 	        </el-option>
 	      </el-select>
-	      <el-select clearable class="filter-item" style="width: 130px" v-model="listQuery.result" :placeholder="Result">
+	      <el-select clearable class="filter-item" style="width: 180px" v-model="listQuery.result" :placeholder="Result">
 	        <el-option v-for="item in resultOptions" :key="item" :label="item" :value="item">
 	        </el-option>
 	      </el-select>
 		  <el-input clearable type="number" style="width: 150px;" class="filter-item" placeholder="ContestId" v-model="listQuery.contestId">
 	      </el-input>
-	      <el-button class="filter-item" type="primary" v-waves icon="el-icon-search" @click="getList">{{$t('table.search')}}</el-button>
-	      <el-button class="filter-item" type="primary" v-waves @click="syncData">同步数据</el-button>
+	      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getList">{{$t('table.search')}}</el-button>
+	      <el-button class="filter-item" type="primary" @click="syncData">同步数据</el-button>
+	  </div>
+	  <div class="filter-container">
+	  	<el-button type="primary" @click="handleSendReport">发送报告</el-button>
 	  </div>
 	  
 	  <el-table v-if="list != null" :data="list" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row>
@@ -60,14 +67,30 @@
 	    </el-pagination>
 	  </div>
     
-    <el-dialog title="Input" :visible.sync="dialogFormVisible">
-    	
+    <el-dialog title="Report" v-loading.body="reportLoading" :visible.sync="dialogReportVisible">
+    	<el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style='width: 400px; margin-left:50px;'>
+    		<el-form-item label="From">
+    			<el-date-picker v-model="temp.from" type="date" value-format="yyyy-MM-dd" format="yyyy-MM-dd" placeholder="From">
+    			</el-date-picker>
+    		</el-form-item>
+    		<el-form-item label="To">
+    			<el-date-picker v-model="temp.to" type="date" value-format="yyyy-MM-dd" format="yyyy-MM-dd" placeholder="To">
+    			</el-date-picker>
+    		</el-form-item>
+    		<el-form-item label="收件人">
+    			<el-input v-model="temp.email"></el-input>
+    		</el-form-item>
+    	</el-form>
+    	<div slot="footer" class="dialog-footer">
+        	<el-button @click="dialogReportVisible = false">取消</el-button>
+        	<el-button type="primary" @click="sendReport">确认</el-button>
+      	</div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import {filterSubmission, syncSubmission} from '@/api/cf'
+import {filterSubmission, syncSubmission, sendWeeklyReport} from '@/api/cf'
 
 export default {
   data() {
@@ -75,13 +98,15 @@ export default {
       listLoading: true,
       dialogStatus: 'create',
       dialogFormVisible: false,
-      dialogInputVisible: false,
+      dialogReportVisible: false,
+      reportLoading: false,
       textMap: {
         update: 'Edit',
         create: 'Create'
       },
       statusOptions:[-1,0,1],
       resultOptions:["OK","WRONG_ANSWER","MEMORY_LIMIT_EXCEEDED", "COMPILATION_ERROR","RUNTIME_ERROR","TIME_LIMIT_EXCEEDED"],
+      userOptions:["scorpiowf","could1991"],
       cfform: {
       	username:null,
       	amount:null,
@@ -95,6 +120,11 @@ export default {
         limit: 5,
         username : null,
         status : null,
+      },
+      temp:{
+      	from:null,
+      	to:null,
+      	email:null
       }
     }
   },
@@ -115,6 +145,13 @@ export default {
     	} else if (val == 1) {
     		return '已结算'
     	}
+    },
+    userFilter(val) {
+    	const userMap ={
+	      	'scorpiowf':"DFS",
+	      	'could1991':"Could"
+	      }
+    	return userMap[val]
     }
   },
   created() {
@@ -230,6 +267,36 @@ export default {
    		}
    		console.log("good")
    		return true
+   	},
+   	handleSendReport() {
+   		this.dialogReportVisible = true
+   	},
+   	sendReport() {
+   		var that = this
+   		var data = Object.assign({}, that.temp)
+   		if (data.email == null || data.email == "") {
+   			that.$message({
+			   message: '你忘记填写email地址了',
+			   type: 'error'
+			})
+			return
+   		}
+   		
+   		this.reportLoading = true 
+   		sendWeeklyReport(data).then(response => {	        
+	        that.reportLoading = false
+	        that.dialogReportVisible = false
+	        that.$message({
+			   message: '成功发送邮件！',
+			   type: 'success'
+			})
+	    }).catch(function (error) {
+		    that.listLoading = false
+		    that.$message({
+			   message: '失败',
+			   type: 'error'
+			})
+		})
    	}
   }
 }

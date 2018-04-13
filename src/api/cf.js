@@ -35,3 +35,10 @@ export function syncSubmission() {
 	  method: 'GET'
   })
 }
+export function sendWeeklyReport(data) {
+	return request({
+	  url: 'cf/report/weekly',
+	  method: 'POST',
+	  data : data
+  })
+}
