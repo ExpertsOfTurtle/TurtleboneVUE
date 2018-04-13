@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
 	  <div class="filter-container">
-	      <el-input clearable @keyup.enter.native="handleFilter" style="width: 150px;" class="filter-item" placeholder="Username" v-model="listQuery.username">
+	  	  <el-input clearable @keyup.enter.native="handleFilter" style="width: 150px;" class="filter-item" placeholder="Username" v-model="listQuery.username">
 	      </el-input>
 	      <el-select clearable style="width: 90px" class="filter-item" v-model="listQuery.status" placeholder="Status">
 	        <el-option v-for="item in statusOptions" :key="item" :label="item | statusFilter" :value="item">
@@ -14,6 +14,7 @@
 		  <el-input clearable type="number" style="width: 150px;" class="filter-item" placeholder="ContestId" v-model="listQuery.contestId">
 	      </el-input>
 	      <el-button class="filter-item" type="primary" v-waves icon="el-icon-search" @click="getList">{{$t('table.search')}}</el-button>
+	      <el-button class="filter-item" type="primary" v-waves @click="syncData">同步数据</el-button>
 	  </div>
 	  
 	  <el-table v-if="list != null" :data="list" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row>
@@ -66,7 +67,7 @@
 </template>
 
 <script>
-import {filterSubmission} from '@/api/cf'
+import {filterSubmission, syncSubmission} from '@/api/cf'
 
 export default {
   data() {
@@ -118,7 +119,7 @@ export default {
   },
   created() {
     //console.log(countTo);
-    //this.getList();
+    this.getList();
   },
   methods: {
   	cleanTask() {
@@ -158,6 +159,15 @@ export default {
 	        	that.betResult = response
 	        }
 	        
+	    }).catch(function (error) {
+		    that.listLoading = false
+		})
+  	},
+  	syncData() {
+  		var that = this
+  		that.listLoading = true
+  		syncSubmission().then(response => {	        
+	       that.getList()	        
 	    }).catch(function (error) {
 		    that.listLoading = false
 		})

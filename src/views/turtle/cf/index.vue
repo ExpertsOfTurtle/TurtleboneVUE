@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-	  <el-button type="primary" @click="handleCreate">Add</el-button>
+	  <el-button type="primary" @click="handleCreate">创建罚题</el-button>
 	  
 	  <el-table v-if="list != null" :data="list" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row>
 	  	<el-table-column align="center" label='ID' width="95">

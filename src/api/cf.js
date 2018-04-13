@@ -29,3 +29,9 @@ export function filterSubmission(data) {
 	  data: data
   })
 }
+export function syncSubmission() {
+	return request({
+	  url: 'cf/cf/syncSubmission',
+	  method: 'GET'
+  })
+}
