@@ -30,3 +30,10 @@ export function modifyDairy(data) {
 	  data : data
   })
 }
+
+export function listAllUsername() {
+	return request({
+	  url: 'dairy/user/all',
+	  method: 'POST'
+  })
+}

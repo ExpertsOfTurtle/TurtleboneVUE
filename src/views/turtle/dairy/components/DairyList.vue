@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import {filter, createDairy, deleteDairy, modifyDairy} from '@/api/dairy'
+import {filter, createDairy, deleteDairy, modifyDairy, listAllUsername} from '@/api/dairy'
 
 export default {
   name: 'DairyList',
@@ -140,6 +140,7 @@ export default {
   	//console.log(this.defaultQuery)
    	this.listQuery = Object.assign(this.listQuery, this.defaultQuery)
    	this.getList()
+   	this.loadAllUser()
   },
   methods: {
   	 getList() {
@@ -164,6 +165,16 @@ export default {
 		    that.list = null
 		})
   	},
+  	loadAllUser() {
+  	 	listAllUsername().then(response => {	        
+	        this.userOptions = response
+	    }).catch(function (error) {
+		    that.$message({
+			   message: '失败',
+			   type: 'error'
+			})
+		})
+  	 },
   	 handleSearch() {
   	 	console.log(JSON.stringify(this.listQuery));
   	 	this.getList()

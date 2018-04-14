@@ -36,7 +36,7 @@
 <script>
 import MDinput from '@/components/MDinput'
 import Tinymce from '@/components/Tinymce'
-import {createDairy, modifyDairy} from '@/api/dairy'
+import {createDairy, modifyDairy, listAllUsername} from '@/api/dairy'
 
 export default {
   name: 'InputDairy',
@@ -78,10 +78,6 @@ export default {
   	},
   	successCreateDirectTo : {
   	},
-  	userOptions : {
-  		type : Array,
-  		default : function() {return ["Turtle", "DFS","WF"]}
-  	},
   	typeOptions : {
   		type : Array,
   		default : function() {return [99, 0, 1, 2]}
@@ -101,7 +97,8 @@ export default {
     		creator:'',
     	//	type:1,
     	//	subtype:11
-    	}
+    	},
+    	userOptions : ["Turtle", "DFS","WF"]
     }
   },
   filters: {
@@ -143,8 +140,19 @@ export default {
    	//console.log(this.action)
    	this.p_action = this.action
    	//console.log("created:"+JSON.stringify(this.listQuery));
+   	this.loadAllUser()
   },
   methods: {
+  	 loadAllUser() {
+  	 	listAllUsername().then(response => {	        
+	        this.userOptions = response
+	    }).catch(function (error) {
+		    that.$message({
+			   message: '失败',
+			   type: 'error'
+			})
+		})
+  	 },
   	 onClickBtn() {
   	 	var that = this
   	 	console.log(that.successCreateDirectTo)
