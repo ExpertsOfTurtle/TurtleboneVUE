@@ -132,6 +132,32 @@ export const constantRouterMap = [{
 	}]
 },
 {
+	path: '/Codeforces',
+	component: Layout,
+	meta: {
+		title: 'Codeforces',
+		icon: 'example'
+	},
+	redirect: 'dfs',
+	children: [{
+		path: 'translate',
+		name: 'Translate',
+		component: ()=>import('@/views/turtle/codeforces/create'),
+		meta: {
+			title: 'Translate',
+			icon: 'form'
+		}
+	},{
+		path: 'Aritical',
+		name: 'Aritical',
+		component: ()=>import('@/views/turtle/codeforces/query'),
+		meta: {
+			title: 'Aritical',
+			icon: 'form'
+		}
+	}]
+},
+{
 	path: '*',
 	redirect: '/404',
 	hidden: true
