@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
   	
-  	<dairy-list :defaultQuery="listQuery" :editDirectTo="'Translate'"></dairy-list>
+  	<dairy-list :defaultQuery="listQuery" :editDirectTo="'CreateFootstep'"></dairy-list>
   	
   	
     
@@ -21,9 +21,7 @@ export default {
     	dialogInputVisible: false,
     	content:'',
     	listQuery : {
-    		creator:'',
-    		type:0,
-    		subtype:0
+    		creator:''
     	}
     }
   },

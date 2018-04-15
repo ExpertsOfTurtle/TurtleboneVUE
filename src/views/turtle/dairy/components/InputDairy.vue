@@ -7,7 +7,7 @@
 	        </el-option>
 	      </el-select>
 	      
-	      <el-select v-if="showTypeFilter" clearable style="width: 150px" class="filter-item" v-model="listQuery.type">
+	      <el-select v-if="showTypeFilter" clearable style="width: 150px" class="filter-item" v-model="listQuery.type" @change="handleChangeType">
 	        <el-option v-for="item in typeOptions" :key="item" :label="item | typeFilter" :value="item">
 	        </el-option>
 	      </el-select>
@@ -95,8 +95,9 @@ export default {
     return {
     	listQuery : {
     		creator:'',
-    	//	type:1,
-    	//	subtype:11
+    		type:null,
+    		subtype:null,
+    		title:null
     	},
     	userOptions : ["Turtle", "DFS","WF"]
     }
@@ -110,6 +111,7 @@ export default {
     		2 : 'Dream'
     	}
     	var rs = typeMap[val]
+    	//console.log(rs)
     	return rs
     },
     subtypeFilter(val) {
@@ -156,7 +158,7 @@ export default {
   	 onClickBtn() {
   	 	var that = this
   	 	console.log(that.successCreateDirectTo)
-  	 	//console.log(JSON.stringify(this.listQuery));
+  	 	console.log(JSON.stringify(this.listQuery));
   	 	createDairy(this.listQuery).then(response => {	        
 	        that.listQuery.content = ""
 	        var msg = response.message
@@ -215,6 +217,9 @@ export default {
 			   type: 'error'
 			})
 		})
+  	 },
+  	 handleChangeType(val) {
+  	 	this.listQuery.subtype = null
   	 }
   	 
   }

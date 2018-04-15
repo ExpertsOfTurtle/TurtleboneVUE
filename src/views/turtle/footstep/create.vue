@@ -5,7 +5,7 @@
   	:title="detail.title" :creator="detail.creator"
   	:successCreateDirectTo="detail.successCreateDirectTo"
   	:showTypeFilter="showTypeFilter" :action="detail.action"
-  	:typeOptions="[0]"
+  	:typeOptions="[0,1,2]"
   	></input-dairy>
      
   </div>
@@ -16,7 +16,7 @@
 import InputDairy from '@/views/turtle/dairy/components/InputDairy'
 
 export default {
-  name: 'dairy',
+  name: 'createFootstep',
   components: { InputDairy },
   props : {
   	detail : {
@@ -25,12 +25,12 @@ export default {
   			return {
   				title : '',
   				content : '',
-  				type : 0,
-  				subtype : 0,
+  				type : null,
+  				subtype :null,
   				dairyid : null,
   				action : 'create',
   				creator : null,
-  				successCreateDirectTo : 'Aritical'
+  				successCreateDirectTo : 'QueryFootstep'
   			}
   		}
   	},

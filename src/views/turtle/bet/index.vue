@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-	  <el-button type="primary" @click="handleCreate">Add</el-button>
+	  <el-button type="primary" @click="handleCreate">创建赌局</el-button>
 	  
 	  <el-table :data="betList" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row>
 	  	<el-table-column align="center" label='ID' width="95">
@@ -44,7 +44,7 @@
       	</div>
     </el-dialog>
     
-    <el-dialog title="Input" :visible.sync="dialogInputVisible">
+    <el-dialog title="输入我的答案" :visible.sync="dialogInputVisible">
     	<el-form ref="dataForm" :model="betInput" label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'>
     		<el-form-item :label="'Username'">
     			<el-input v-model="betInput.username"></el-input>
@@ -62,7 +62,7 @@
     		</el-form-item>
     	</el-form>
     	<el-form ref="dataForm" :model="betInput" label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'>
-    		<el-form-item :label="'Data'">
+    		<el-form-item :label="'我的答案'">
     			<el-input type="textarea" class="article-textarea" :rows="1" autosize placeholder="请输入内容" v-model="betInput.data">
           		</el-input>
     		</el-form-item>
@@ -194,6 +194,20 @@ export default {
    	},
    	inputBetData() {
    		var that = this
+   		if (!that.betInput.username || that.betInput.username.length == 0) {
+   			that.$message({
+			  message: '你必须留下你的姓名！',
+			  type: 'error'
+			})
+			return
+   		}
+   		if (!that.betInput.data || that.betInput.data.length == 0) {
+   			that.$message({
+			  message: '你必须写下答案！',
+			  type: 'error'
+			})
+			return
+   		}
    		that.listLoading = true
    		that.betInput.bid = that.betInfo.id
    		var data = that.betInput
@@ -205,7 +219,7 @@ export default {
 		    that.listLoading = false
 		})
    	},
-   	onDeleteBet() {
+   	processDeleteBet() {
    		var that = this
    		that.listLoading = true
    		that.betInput.bid = that.betInfo.id
@@ -216,6 +230,21 @@ export default {
 	    }).catch(function (error) {
 		    that.listLoading = false
 		})
+   	},
+   	onDeleteBet() {
+   		var that = this
+    	this.$confirm('想清楚要删除赌局吗?', '提醒', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          that.processDeleteBet()
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
    	}
   }
 }

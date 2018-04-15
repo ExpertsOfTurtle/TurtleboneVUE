@@ -48,7 +48,10 @@
     <el-dialog title="Input" :visible.sync="dialogInputVisible">
     	<el-form ref="dataForm" :model="cfform" label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'>
     		<el-form-item :label="'Username'">
-    			<el-input v-model="cfform.username"></el-input>
+    			<el-select clearable style="width: 150px" class="filter-item" v-model="cfform.username" placeholder="姓名">
+			      	<el-option v-for="item in userList" :key="item" :label="item" :value="item">
+			        </el-option>
+			    </el-select>
     		</el-form-item>
     		<el-form-item :label="'Amount'">
     			<el-input type="number" v-model="cfform.amount"></el-input>
@@ -72,7 +75,7 @@
 </template>
 
 <script>
-import {filter, createTask, deleteTask} from '@/api/cf'
+import {listAllUsername, filter, createTask, deleteTask} from '@/api/cf'
 
 export default {
   data() {
@@ -91,6 +94,7 @@ export default {
       	reason:null,
       	deadline:null
       },
+      userList :["DFS", "WF"],
       deadline:null,
       total:null,
       list:null,
@@ -126,6 +130,16 @@ export default {
       	deadline:null
       }
   	},
+  	loadAllUser() {
+  	 	listAllUsername().then(response => {	        
+	        this.userList = response
+	    }).catch(function (error) {
+		    that.$message({
+			   message: '失败',
+			   type: 'error'
+			})
+		})
+  	 },
   	getList() {
   		var that = this
   		that.listLoading = true
@@ -216,6 +230,21 @@ export default {
 		})
    	},
    	deleteCFTask(){
+   		var that = this
+    	this.$confirm('想清楚要删除罚题吗?', '提醒', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          that.processDeleteCFTask()
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+   	},
+   	processDeleteCFTask(){
    		var that = this
    		var id = this.cfform.id
    		deleteTask(id).then(response => {	   

@@ -1,7 +1,13 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name:{{name}}</div>
-    <div class="dashboard-text">roles:<span v-for='role in roles' :key='role'>{{role}}</span></div>
+  	<el-select style="width: 150px" class="filter-item" v-model="type">
+	      <el-option v-for="item in typeOptions" :key="item" :label="item" :value="item">
+	      </el-option>
+	</el-select>
+    <el-select v-if="type >= 0 && type < 99" clearable class="filter-item" style="width: 180px" v-model="subtype">
+	   <el-option v-for="item in subtypeOptions[type]" :key="item" :label="item" :value="item">
+	   </el-option>
+	</el-select>
   </div>
 </template>
 
@@ -10,10 +16,16 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'dashboard',
+  data() {
+  	return {
+  		type : null,
+  		subtype : null
+  	}
+  },
   computed: {
     ...mapGetters([
-      'name',
-      'roles'
+      'typeOptions',
+      'subtypeOptions'
     ])
   }
 }

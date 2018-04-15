@@ -1,5 +1,12 @@
 import request from '@/utils/request'
 
+export function listAllUsername() {
+	return request({
+	  url: 'cf/user/all',
+	  method: 'POST'
+  })
+}
+
 export function filter(data) {
   return request({
     url: 'cf/task/filter',

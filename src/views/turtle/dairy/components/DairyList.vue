@@ -56,7 +56,9 @@
 	    </el-pagination>
 	  </div>
 	  
-	  <el-dialog title="内容"  :visible.sync="dialogDetailVisible">
+	  <el-dialog :title="detail.title"  :visible.sync="dialogDetailVisible">
+	  	<p>By {{detail.creator}}</p>
+	 	<hr>
 	  	<div class="editor-content" v-html="detail.content"></div>
 	  	<el-button class="filter-item" type="primary" @click="handleEdit">修改</el-button>
 	  	<el-button class="filter-item" type="danger" @click="handleDelete">删除</el-button>
@@ -80,6 +82,9 @@ export default {
 	    		title:null
   			}
   		}
+  	},
+  	editDirectTo : {
+  		type : String
   	}
   },
   data() {
@@ -198,16 +203,17 @@ export default {
       	this.getList();
     },
     handleEdit () {
+    	var that = this
     	var param = Object.assign({action : 'edit'}, this.detail)
     	param.dairyid = param.id
     //	console.log(JSON.stringify(param));
     	this.$router.push({
     		//path : '/Codeforces/translate',
-    		name : 'Translate',
+    		name : that.editDirectTo,
     		params : param
     	})
     },
-    handleDelete() {
+    processDelete(){
     	var that = this
     	var id = this.detail.id
     	deleteDairy(id).then(response => {	        
@@ -223,6 +229,22 @@ export default {
 				type: 'error'
 			})
 		})
+    },
+    handleDelete() {
+    	var that = this
+    	this.$confirm('想清楚要删除吗?', '严重提醒', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          that.processDelete()
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+    	
     	
     }
   }

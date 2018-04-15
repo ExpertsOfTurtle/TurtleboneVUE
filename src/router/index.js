@@ -43,65 +43,23 @@ export const constantRouterMap = [{
 	}]
 },
 {
-	path: '/example',
-	component: Layout,
-	redirect: '/example/table',
-	name: 'Example',
-	meta: {
-		title: 'Example',
-		icon: 'example'
-	},
-	children: [{
-		path: 'table',
-		name: 'Table',
-		component: ()=>import('@/views/table/index'),
-		meta: {
-			title: 'Table',
-			icon: 'table'
-		}
-	},
-	{
-		path: 'tree',
-		name: 'Tree',
-		component: ()=>import('@/views/tree/index'),
-		meta: {
-			title: 'Tree',
-			icon: 'tree'
-		}
-	}]
-},
-{
-	path: '/form',
+	path: '/Choice',
 	component: Layout,
 	children: [{
-		path: 'index',
+		path: 'Punish',
 		name: 'Form',
-		component: ()=>import('@/views/form/index'),
+		component: ()=>import('@/views/choice'),
 		meta: {
-			title: 'Form',
+			title: 'Choice',
 			icon: 'form'
 		}
 	}]
 },
 {
-	path: '/dfs',
-	component: Layout,
-	redirect: '/dfs/exam',
-	children: [{
-		path: 'exam',
-		name: 'Exam',
-		component: ()=>import('@/views/dfs/exam/index'),
-		meta: {
-			title: 'Exam',
-			icon: 'form'
-		}
-	}]
-},
-{
-	path: '/turtle',
+	path: '/Punish',
 	component: Layout,
 	meta: {
-		title: 'Turtle',
+		title: 'Punish',
 		icon: 'example'
 	},
 	redirect: '/turtle/bet',
@@ -110,7 +68,7 @@ export const constantRouterMap = [{
 		name: 'Bet',
 		component: ()=>import('@/views/turtle/bet'),
 		meta: {
-			title: 'Bet',
+			title: '赌局',
 			icon: 'form'
 		}
 	},{
@@ -118,15 +76,7 @@ export const constantRouterMap = [{
 		name: 'CF',
 		component: ()=>import('@/views/turtle/cf'),
 		meta: {
-			title: 'CF',
-			icon: 'form'
-		}
-	},{
-		path: 'submission',
-		name: 'Submission',
-		component: ()=>import('@/views/turtle/submission'),
-		meta: {
-			title: 'submission',
+			title: '罚题',
 			icon: 'form'
 		}
 	}]
@@ -144,7 +94,7 @@ export const constantRouterMap = [{
 		name: 'Translate',
 		component: ()=>import('@/views/turtle/codeforces/create'),
 		meta: {
-			title: 'Translate',
+			title: '创建翻译',
 			icon: 'form'
 		}
 	},{
@@ -152,7 +102,41 @@ export const constantRouterMap = [{
 		name: 'Aritical',
 		component: ()=>import('@/views/turtle/codeforces/query'),
 		meta: {
-			title: 'Aritical',
+			title: '已译题目',
+			icon: 'form'
+		}
+	},{
+		path: 'submission',
+		name: 'Submission',
+		component: ()=>import('@/views/turtle/submission'),
+		meta: {
+			title: '提交记录',
+			icon: 'form'
+		}
+	}]
+},
+{
+	path: '/Footstep',
+	component: Layout,
+	meta: {
+		title: 'Footstep',
+		icon: 'example'
+	},
+	redirect: 'nothing',
+	children: [{
+		path: 'CreateFootstep',
+		name: 'CreateFootstep',
+		component: ()=>import('@/views/turtle/footstep/create'),
+		meta: {
+			title: '编辑',
+			icon: 'form'
+		}
+	},{
+		path: 'QueryFootstep',
+		name: 'QueryFootstep',
+		component: ()=>import('@/views/turtle/footstep/query'),
+		meta: {
+			title: '查看',
 			icon: 'form'
 		}
 	}]
