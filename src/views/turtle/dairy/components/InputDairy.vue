@@ -1,25 +1,30 @@
 <template>
   <div class="app-container">
   	 <h3>{{ p_action | actionFilter }}</h3>
-  	 <div class="filter-container">
-	      <el-select v-if="showUserFilter" clearable style="width: 150px" class="filter-item" v-model="listQuery.creator" placeholder="Username">
+  	 <!--<div class="filter-container">-->
+  	 <el-form ref="dataForm" :model="listQuery" label-position="left" label-width="120px" style='width: 500px;'>
+	    <el-form-item label="创建人">  
+	      <el-select v-if="showUserFilter" clearable style="width: 300px" class="filter-item" v-model="listQuery.creator" placeholder="Username">
 	      	<el-option v-for="item in userOptions" :key="item" :label="item" :value="item">
 	        </el-option>
 	      </el-select>
-	      
+	    </el-form-item>
+	    <el-form-item label="类型">  
 	      <el-select v-if="showTypeFilter" clearable style="width: 150px" class="filter-item" v-model="listQuery.type" @change="handleChangeType">
-	        <el-option v-for="item in typeOptions" :key="item" :label="item | typeFilter" :value="item">
+	        <el-option v-for="item in typeOpts" :key="item" :label="item | typeFilter" :value="item">
 	        </el-option>
 	      </el-select>
-	      <el-select v-if="showTypeFilter && listQuery.type >= 0 && listQuery.type < 99" clearable class="filter-item" style="width: 180px" v-model="listQuery.subtype">
+	      <el-select v-if="showTypeFilter && listQuery.type >= 0 && listQuery.type < 99" clearable class="filter-item" style="width: 150px" v-model="listQuery.subtype">
 	        <el-option v-for="item in subtypeOptions[listQuery.type]" :key="item" :label="item | subtypeFilter" :value="item">
 	        </el-option>
 	      </el-select>
-	      <!--
-		  <el-input v-if="showTitleFilter" clearable style="width: 200px;" class="filter-item" placeholder="Title" v-model="listQuery.title">
-	      </el-input>
-		  -->
-	  </div>
+	    </el-form-item>
+	    <el-form-item label="到期时间">  
+	      <el-date-picker v-model="listQuery.expiretime" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
+    	  </el-date-picker>
+	    </el-form-item>
+	 </el-form>
+	
 	  
 	<MDinput name="name" v-model="listQuery.title" required :maxlength="100">Title</MDinput>
 	
@@ -34,9 +39,11 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import MDinput from '@/components/MDinput'
 import Tinymce from '@/components/Tinymce'
 import {createDairy, modifyDairy, listAllUsername} from '@/api/dairy'
+import {getDairyType, getDairyTypeDesp, getDairySubType, getDairySubTypeDesp} from '@/api/dairyMapper'
 
 export default {
   name: 'InputDairy',
@@ -72,57 +79,45 @@ export default {
   	dairyid : {
   		type : Number
   	},
+  	expTime : {
+  		type : Number
+  	},
   	action : {
   		type : String,
   		default : 'create'
   	},
   	successCreateDirectTo : {
   	},
-  	typeOptions : {
-  		type : Array,
-  		default : function() {return [99, 0, 1, 2]}
-  	},
-  	subtypeOptions : {
-  		type : Object,
-  		default : function() {
-  		return {
-    		0: [0, 1, 2],
-    		1: [10, 11]
-    	}}
-  	}  	
-  },
+  	defaultTypeOptions : {
+  		type : Array
+  	}
+  },/*
+  computed: {
+    ...mapGetters([
+      'typeOptions',
+      'subtypeOptions'
+    ])
+  },*/
   data() {
     return {
     	listQuery : {
     		creator:'',
     		type:null,
     		subtype:null,
+    		expiretime:null,
     		title:null
     	},
+    	subtypeOptions : null,
+    	typeOpts : null,
     	userOptions : ["Turtle", "DFS","WF"]
     }
   },
   filters: {
     typeFilter(val) {
-    	const typeMap = {
-    		99 : 'All',
-    		0 : 'Codeforces',
-    		1 : 'Normal',
-    		2 : 'Dream'
-    	}
-    	var rs = typeMap[val]
-    	//console.log(rs)
-    	return rs
+    	return getDairyTypeDesp(val)
     },
     subtypeFilter(val) {
-    	const typeMap = {
-    		0 : '翻译',
-    		1 : '收藏',
-    		2 : '题解',
-    		10 : '想法',
-    		11 : '学习'
-    	}
-    	return typeMap[val]
+    	return getDairySubTypeDesp(val)
     },
     actionFilter(val) {
     	if (val == 'edit') {
@@ -133,12 +128,19 @@ export default {
     }
   },
   created() {
+  	if (this.defaultTypeOptions) {
+  		this.typeOpts = this.defaultTypeOptions
+  	} else {
+  		this.typeOpts = getDairyType()
+  	}
+  	this.subtypeOptions = getDairySubType()
   	this.listQuery.creator = this.creator
    	this.listQuery.type = this.type
    	this.listQuery.subtype = this.subtype
    	this.listQuery.title = this.title
    	this.listQuery.content = this.content
    	this.listQuery.id = this.dairyid
+   	this.listQuery.expiretime = new Date(this.expTime)
    	//console.log(this.action)
    	this.p_action = this.action
    	//console.log("created:"+JSON.stringify(this.listQuery));
@@ -158,7 +160,6 @@ export default {
   	 onClickBtn() {
   	 	var that = this
   	 	console.log(that.successCreateDirectTo)
-  	 	console.log(JSON.stringify(this.listQuery));
   	 	createDairy(this.listQuery).then(response => {	        
 	        that.listQuery.content = ""
 	        var msg = response.message
@@ -185,7 +186,6 @@ export default {
   	 },
   	 onEditDairy() {
   	 	var that = this
-  	 	console.log(that.successCreateDirectTo)
   	 	//console.log(JSON.stringify(this.listQuery));
   	 	if (!that.listQuery.id || that.listQuery.id <= 0) {
   	 		that.$message({

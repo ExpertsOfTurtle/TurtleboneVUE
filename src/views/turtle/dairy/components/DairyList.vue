@@ -1,20 +1,28 @@
 <template>
   <div class="app-container">
 	  <div class="filter-container">
-	     <el-select clearable style="width: 150px" class="filter-item" v-model="listQuery.creator" placeholder="Username">
+	     <el-select clearable style="width: 150px" class="filter-item" v-model="listQuery.creator" placeholder="创建人">
 	      	<el-option v-for="item in userOptions" :key="item" :label="item" :value="item">
 	        </el-option>
 	      </el-select>
-	      <el-select style="width: 150px" class="filter-item" v-model="listQuery.type" @change="handleChangeType">
-	        <el-option v-for="item in typeOptions" :key="item" :label="item | typeFilter" :value="item">
+	      <el-input clearable style="width: 200px;" class="filter-item" v-model="listQuery.title"  placeholder="标题">
+	      </el-input>
+	      <el-select style="width: 150px" class="filter-item" v-model="listQuery.type" @change="handleChangeType" placeholder="类型">
+	        <el-option v-for="item in typeOpts" :key="item" :label="item | typeFilter" :value="item">
 	        </el-option>
 	      </el-select>
-	      <el-select v-if="listQuery.type >= 0 && listQuery.type < 99" clearable class="filter-item" style="width: 180px" v-model="listQuery.subtype">
+	      <el-select v-if="listQuery.type >= 0 && listQuery.type < 99" clearable class="filter-item" 
+	      style="width: 180px" v-model="listQuery.subtype"  placeholder="子类型">
 	        <el-option v-for="item in subtypeOptions[listQuery.type]" :key="item" :label="item | subtypeFilter" :value="item">
 	        </el-option>
 	      </el-select>
-		  <el-input clearable style="width: 200px;" class="filter-item" placeholder="Title" v-model="listQuery.title">
-	      </el-input>
+	      <el-select class="filter-item" style="width: 180px" v-model="listQuery.checkExpire">
+	        <el-option label="校验Expire" value="Y">
+	        </el-option>
+	        <el-option  label="不校验Expire" value="N">
+	        </el-option>
+	      </el-select>
+		  
 	      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleSearch">{{$t('table.search')}}</el-button>
 	  </div>
 	  
@@ -24,30 +32,35 @@
 	          {{scope.$index}}
 	        </template>
 	    </el-table-column>
-	    <el-table-column label="Creator" >
+	    <el-table-column label="创建人" >
 	        <template slot-scope="scope">
 	          {{scope.row.creator}}
 	        </template>
 	    </el-table-column>
-	    <el-table-column label="Title" >
+	    <el-table-column label="标题" >
 	        <template slot-scope="scope">
 	          <span class="link-type" @click="handleReadDetail(scope.row)">{{scope.row.title}}</span>
 	        </template>
 	    </el-table-column>
-	    <el-table-column label="Type" >
+	    <el-table-column label="类型" >
 	        <template slot-scope="scope">
 	          {{scope.row.type | typeFilter}}
 	        </template>
 	    </el-table-column>
-	    <el-table-column label="Sub type" >
+	    <el-table-column label="子类型" >
 	        <template slot-scope="scope">
 	          {{scope.row.subtype | subtypeFilter}}
 	        </template>
 	    </el-table-column>
-	    <el-table-column label="Create Time" >
+	    <el-table-column label="创建时间" >
 	        <template slot-scope="scope">
 	          {{scope.row.createtime | timeFilter}}
 	        </template>
+	    </el-table-column>
+	    <el-table-column label="过期时间" >
+	    	<template slot-scope="scope">
+	    		 {{scope.row.expiretime | timeFilter}}
+    	    </template>
 	    </el-table-column>
 	  </el-table>
 	  
@@ -57,7 +70,7 @@
 	  </div>
 	  
 	  <el-dialog :title="detail.title"  :visible.sync="dialogDetailVisible">
-	  	<p>By {{detail.creator}}</p>
+	  	<span>Author:  {{detail.creator}} <b v-if="detail.expiretime" style="float:right">Expired Date : {{ detail.expiretime | timeFilter }}</b></span>
 	 	<hr>
 	  	<div class="editor-content" v-html="detail.content"></div>
 	  	<el-button class="filter-item" type="primary" @click="handleEdit">修改</el-button>
@@ -67,7 +80,10 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import {filter, createDairy, deleteDairy, modifyDairy, listAllUsername} from '@/api/dairy'
+import {formatDate} from '@/utils/date.js'
+import {getDairyType, getDairyTypeDesp, getDairySubType, getDairySubTypeDesp} from '@/api/dairyMapper'
 
 export default {
   name: 'DairyList',
@@ -85,26 +101,32 @@ export default {
   	},
   	editDirectTo : {
   		type : String
+  	},
+  	defaultTypeOptions : {
+  		type : Array
   	}
+  },
+  computed: {
+    ...mapGetters([
+      'typeOptions',
+      'subtypeOptions'
+    ])
   },
   data() {
     return {
     	dialogDetailVisible : false,
     	listLoading : false,
     	userOptions : ["DFS","WF"],
-    	typeOptions : [99, 0, 1, 2],
-    	subtypeOptions : {
-    		0: [0, 1, 2],
-    		1: [10, 11]
-    	},
     	listQuery : {
     		creator:null,
     		type:null,
     		subtype:null,
     		title:null,
+    		checkExpire : 'Y',
     		page: 1,
         	limit: 5
     	},
+    	typeOpts : null,
     	total : null,
     	list : null,
     	detail : {
@@ -113,6 +135,11 @@ export default {
   },
   filters: {
     timeFilter(val) {
+    	if (val) {
+    		return formatDate(new Date(val), 'yyyy-MM-dd hh:mm:ss')
+    	} else {
+    		return ''
+    	}
     	var d = new Date()
     	var offset = d.getTimezoneOffset() * 60000;
         //得到现在的格林尼治时间
@@ -121,28 +148,19 @@ export default {
         return date.toUTCString()
     },
     typeFilter(val) {
-    	const typeMap = {
-    		99 : 'All',
-    		0 : 'Codeforces',
-    		1 : 'Normal',
-    		2 : 'Dream'
-    	}
-    	var rs = typeMap[val]
-    	return rs
+    	return getDairyTypeDesp(val)
     },
     subtypeFilter(val) {
-    	const typeMap = {
-    		0 : '翻译',
-    		1 : '收藏',
-    		2 : '题解',
-    		10 : '想法',
-    		11 : '学习'
-    	}
-    	return typeMap[val]
+    	return getDairySubTypeDesp(val)
     }
   },
   created() {
-  	//console.log(this.defaultQuery)
+  	if (this.defaultTypeOptions) {
+  		this.typeOpts = this.defaultTypeOptions
+  	} else {
+  		this.typeOpts = getDairyType()
+  	}
+
    	this.listQuery = Object.assign(this.listQuery, this.defaultQuery)
    	this.getList()
    	this.loadAllUser()
@@ -181,7 +199,7 @@ export default {
 		})
   	 },
   	 handleSearch() {
-  	 	console.log(JSON.stringify(this.listQuery));
+  	 	//console.log(JSON.stringify(this.listQuery));
   	 	this.getList()
   	 },
   	 handleReadDetail(row) {
@@ -206,6 +224,7 @@ export default {
     	var that = this
     	var param = Object.assign({action : 'edit'}, this.detail)
     	param.dairyid = param.id
+    	param.expTime = param.expiretime
     //	console.log(JSON.stringify(param));
     	this.$router.push({
     		//path : '/Codeforces/translate',

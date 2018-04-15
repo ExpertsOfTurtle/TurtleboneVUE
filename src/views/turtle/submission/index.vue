@@ -11,7 +11,7 @@
 	        <el-option v-for="item in statusOptions" :key="item" :label="item | statusFilter" :value="item">
 	        </el-option>
 	      </el-select>
-	      <el-select clearable class="filter-item" style="width: 180px" v-model="listQuery.result" :placeholder="Result">
+	      <el-select clearable class="filter-item" style="width: 180px" v-model="listQuery.result" placeholder="Result">
 	        <el-option v-for="item in resultOptions" :key="item" :label="item" :value="item">
 	        </el-option>
 	      </el-select>
@@ -115,11 +115,13 @@ export default {
       },
       deadline:null,
       list:null,
+      total:null,
       listQuery: {
         page: 1,
         limit: 5,
         username : null,
         status : null,
+        result : null
       },
       temp:{
       	from:null,

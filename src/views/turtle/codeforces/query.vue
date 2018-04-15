@@ -1,7 +1,11 @@
 <template>
   <div class="app-container">
   	
-  	<dairy-list :defaultQuery="listQuery" :editDirectTo="'Translate'"></dairy-list>
+  	<dairy-list 
+  		:defaultQuery="listQuery" 
+  		:editDirectTo="'Translate'"
+  		:defaultTypeOptions="[0]"
+  	></dairy-list>
   	
   	
     

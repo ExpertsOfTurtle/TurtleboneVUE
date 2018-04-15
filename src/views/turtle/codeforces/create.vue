@@ -5,7 +5,7 @@
   	:title="detail.title" :creator="detail.creator"
   	:successCreateDirectTo="detail.successCreateDirectTo"
   	:showTypeFilter="showTypeFilter" :action="detail.action"
-  	:typeOptions="[0]"
+  	:defaultTypeOptions="[0]"
   	></input-dairy>
      
   </div>

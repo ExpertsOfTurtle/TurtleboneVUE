@@ -3,6 +3,7 @@
   	<input-dairy :type="detail.type" :subtype="detail.subtype" 
   	:content="detail.content" :dairyid="detail.dairyid" 
   	:title="detail.title" :creator="detail.creator"
+  	:expiretime="detail.expiretime"
   	:successCreateDirectTo="detail.successCreateDirectTo"
   	:showTypeFilter="showTypeFilter" :action="detail.action"
   	:typeOptions="[0,1,2]"
@@ -30,6 +31,7 @@ export default {
   				dairyid : null,
   				action : 'create',
   				creator : null,
+  				expiretime : null,
   				successCreateDirectTo : 'QueryFootstep'
   			}
   		}
