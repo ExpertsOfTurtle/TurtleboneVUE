@@ -2,7 +2,7 @@
   <div class="app-container">
   	<input-dairy :type="detail.type" :subtype="detail.subtype" 
   	:content="detail.content" :dairyid="detail.dairyid" 
-  	:title="detail.title" :creator="detail.creator"
+  	:title="detail.title" :creator="detail.creator" :status="detail.status"
   	:expiretime="detail.expiretime"
   	:successCreateDirectTo="detail.successCreateDirectTo"
   	:showTypeFilter="showTypeFilter" :action="detail.action"
@@ -32,6 +32,7 @@ export default {
   				action : 'create',
   				creator : null,
   				expiretime : null,
+  				status : 0,
   				successCreateDirectTo : 'QueryFootstep'
   			}
   		}

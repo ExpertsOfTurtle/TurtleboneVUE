@@ -19,6 +19,12 @@
 	        </el-option>
 	      </el-select>
 	    </el-form-item>
+	    <el-form-item label="状态">  
+	   	  <el-select  clearable class="filter-item" style="width: 150px" v-model="listQuery.status">
+	        <el-option v-for="item in statusOptions" :key="item" :label="item | statusFilter" :value="item">
+	        </el-option>
+	      </el-select>
+	    </el-form-item>
 	    <el-form-item label="到期时间">  
 	      <el-date-picker v-model="listQuery.expiretime" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
     	  </el-date-picker>
@@ -43,7 +49,7 @@ import { mapGetters } from 'vuex'
 import MDinput from '@/components/MDinput'
 import Tinymce from '@/components/Tinymce'
 import {createDairy, modifyDairy, listAllUsername} from '@/api/dairy'
-import {getDairyType, getDairyTypeDesp, getDairySubType, getDairySubTypeDesp} from '@/api/dairyMapper'
+import {getDairyType, getDairyTypeDesp, getDairySubType, getDairySubTypeDesp, getDairyStatus, getDairyStatusDesp} from '@/api/dairyMapper'
 
 export default {
   name: 'InputDairy',
@@ -69,6 +75,9 @@ export default {
   	},
   	content : {
   		type : String
+  	},
+  	status : {
+  		type : Number
   	},
   	type : {
   		type : Number
@@ -105,9 +114,11 @@ export default {
     		type:null,
     		subtype:null,
     		expiretime:null,
-    		title:null
+    		title:null,
+    		status : null    		
     	},
     	subtypeOptions : null,
+    	statusOptions : null,
     	typeOpts : null,
     	userOptions : ["Turtle", "DFS","WF"]
     }
@@ -125,6 +136,9 @@ export default {
     	} else {
     		return 'Create'
     	}
+    },
+    statusFilter(val) {
+    	return getDairyStatusDesp(val)
     }
   },
   created() {
@@ -133,17 +147,19 @@ export default {
   	} else {
   		this.typeOpts = getDairyType()
   	}
+  	this.statusOptions = getDairyStatus()
   	this.subtypeOptions = getDairySubType()
   	this.listQuery.creator = this.creator
    	this.listQuery.type = this.type
    	this.listQuery.subtype = this.subtype
    	this.listQuery.title = this.title
    	this.listQuery.content = this.content
+   	this.listQuery.status = this.status
    	this.listQuery.id = this.dairyid
    	this.listQuery.expiretime = new Date(this.expTime)
    	//console.log(this.action)
    	this.p_action = this.action
-   	//console.log("created:"+JSON.stringify(this.listQuery));
+   	console.log("created:"+JSON.stringify(this.listQuery));
    	this.loadAllUser()
   },
   methods: {

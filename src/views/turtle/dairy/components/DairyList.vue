@@ -22,6 +22,10 @@
 	        <el-option  label="不校验Expire" value="N">
 	        </el-option>
 	      </el-select>
+	      <el-select class="filter-item" style="width: 180px" v-model="listQuery.status" placeholder="状态">
+	        <el-option v-for="item in statusOptions" :key="item" :label="item | statusFilter" :value="item" >
+	        </el-option>
+	      </el-select>
 		  
 	      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleSearch">{{$t('table.search')}}</el-button>
 	  </div>
@@ -52,6 +56,11 @@
 	          {{scope.row.subtype | subtypeFilter}}
 	        </template>
 	    </el-table-column>
+	     <el-table-column label="状态" >
+	        <template slot-scope="scope">
+	          {{scope.row.status | statusFilter}}
+	        </template>
+	    </el-table-column>
 	    <el-table-column label="创建时间" >
 	        <template slot-scope="scope">
 	          {{scope.row.createtime | timeFilter}}
@@ -74,7 +83,7 @@
 	 	<hr>
 	  	<div class="editor-content" v-html="detail.content"></div>
 	  	<el-button class="filter-item" type="primary" @click="handleEdit">修改</el-button>
-	  	<el-button class="filter-item" type="danger" @click="handleDelete">删除</el-button>
+	  	<el-button v-if="detail.status == 0" class="filter-item" type="danger" @click="handleDelete">删除</el-button>
 	  </el-dialog>
   </div>
 </template>
@@ -83,7 +92,7 @@
 import { mapGetters } from 'vuex'
 import {filter, createDairy, deleteDairy, modifyDairy, listAllUsername} from '@/api/dairy'
 import {formatDate} from '@/utils/date.js'
-import {getDairyType, getDairyTypeDesp, getDairySubType, getDairySubTypeDesp} from '@/api/dairyMapper'
+import {getDairyType, getDairyTypeDesp, getDairySubType, getDairySubTypeDesp, getDairyStatus, getDairyStatusDesp} from '@/api/dairyMapper'
 
 export default {
   name: 'DairyList',
@@ -123,9 +132,11 @@ export default {
     		subtype:null,
     		title:null,
     		checkExpire : 'Y',
+    		status : 0,
     		page: 1,
         	limit: 5
     	},
+    	statusOptions : null,
     	typeOpts : null,
     	total : null,
     	list : null,
@@ -152,6 +163,9 @@ export default {
     },
     subtypeFilter(val) {
     	return getDairySubTypeDesp(val)
+    },
+    statusFilter(val) {
+    	return getDairyStatusDesp(val)
     }
   },
   created() {
@@ -160,7 +174,7 @@ export default {
   	} else {
   		this.typeOpts = getDairyType()
   	}
-
+	this.statusOptions = getDairyStatus()
    	this.listQuery = Object.assign(this.listQuery, this.defaultQuery)
    	this.getList()
    	this.loadAllUser()
@@ -225,7 +239,7 @@ export default {
     	var param = Object.assign({action : 'edit'}, this.detail)
     	param.dairyid = param.id
     	param.expTime = param.expiretime
-    //	console.log(JSON.stringify(param));
+    	console.log(JSON.stringify(param));
     	this.$router.push({
     		//path : '/Codeforces/translate',
     		name : that.editDirectTo,

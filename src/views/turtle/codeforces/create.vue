@@ -2,7 +2,7 @@
   <div class="app-container">
   	<input-dairy :type="detail.type" :subtype="detail.subtype" 
   	:content="detail.content" :dairyid="detail.dairyid" 
-  	:title="detail.title" :creator="detail.creator"
+  	:title="detail.title" :creator="detail.creator" :status="detail.status"
   	:successCreateDirectTo="detail.successCreateDirectTo"
   	:showTypeFilter="showTypeFilter" :action="detail.action"
   	:defaultTypeOptions="[0]"
