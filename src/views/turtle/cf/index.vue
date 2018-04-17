@@ -18,6 +18,11 @@
 	          {{scope.row.amount}}
 	        </template>
 	    </el-table-column>
+	    <el-table-column label="Finish" >
+	        <template slot-scope="scope">
+	          {{scope.row.finish}}
+	        </template>
+	    </el-table-column>
 	    <el-table-column label="Reason" >
 	        <template slot-scope="scope">
 	          <span class="link-type" @click="handleInput(scope.row)">{{scope.row.reason}}</span>
@@ -56,6 +61,9 @@
     		<el-form-item :label="'Amount'">
     			<el-input type="number" v-model="cfform.amount"></el-input>
     		</el-form-item>
+    		<el-form-item :label="'Finish'">
+    			<el-input type="number" v-model="cfform.finish"></el-input>
+    		</el-form-item>
     		<el-form-item :label="'Reason'">
     			<el-input v-model="cfform.reason"></el-input>
     		</el-form-item>
@@ -76,7 +84,7 @@
 
 <script>
 import {listAllUsername, filter, createTask, deleteTask} from '@/api/cf'
-
+import {formatDate} from '@/utils/date.js'
 export default {
   data() {
     return {
@@ -89,10 +97,11 @@ export default {
         create: 'Create'
       },
       cfform: {
-      	username:null,
-      	amount:null,
-      	reason:null,
-      	deadline:null
+      	username : null,
+      	amount : null,
+      	finish : null,
+      	reason : null,
+      	deadline : null
       },
       userList :["DFS", "WF"],
       deadline:null,
@@ -108,6 +117,7 @@ export default {
   },
   filters: {
     dateFilter(val) {
+    	return formatDate(new Date(val), 'yyyy-MM-dd hh:mm:ss')
     	var d = new Date()
     	var offset = d.getTimezoneOffset() * 60000;
         //得到现在的格林尼治时间
@@ -125,10 +135,11 @@ export default {
   methods: {
   	cleanTask() {
   		this.cfform = {
-      	username:null,
-      	amount:null,
-      	reason:null,
-      	deadline:null
+      	username : null,
+      	amount : null,
+      	finish : null,
+      	reason : null,
+      	deadline : null
       }
   	},
   	loadAllUser() {

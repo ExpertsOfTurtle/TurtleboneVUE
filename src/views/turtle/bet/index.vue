@@ -97,7 +97,7 @@
 
 <script>
 import {createBet, listBet, inputBet, queryBet, deleteBet} from '@/api/bet'
-
+import {formatDate} from '@/utils/date.js'
 export default {
   data() {
     return {
@@ -126,6 +126,7 @@ export default {
   },
   filters: {
     dateFilter(val) {
+    	return formatDate(new Date(val), 'yyyy-MM-dd hh:mm:ss')
     	var d = new Date()
     	var offset = d.getTimezoneOffset() * 60000;
         //得到现在的格林尼治时间
