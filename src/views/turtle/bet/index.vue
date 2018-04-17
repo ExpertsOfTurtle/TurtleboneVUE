@@ -5,7 +5,7 @@
 	  <el-table :data="betList" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row>
 	  	<el-table-column align="center" label='ID' width="95">
 	        <template slot-scope="scope">
-	          {{scope.$index}}
+	          <span class="link-type" @click="handleInput(scope.row)">{{scope.$index}}</span>
 	        </template>
 	    </el-table-column>
 	    <el-table-column label="Creator" >
@@ -182,8 +182,15 @@ export default {
    	},
    	createData() {
    		var that = this
-   		that.listLoading = true
    		var data = that.betInfo
+   		if (!data.creator || !data.title || !data.publicTime) {
+   			that.$message({
+			  message: '资料还没填写完整',
+			  type: 'error'
+			})
+			return
+   		}
+   		that.listLoading = true
    		createBet(data).then(response => {	        
 	        that.listLoading = false
 	        that.dialogFormVisible = false

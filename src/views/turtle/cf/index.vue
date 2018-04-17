@@ -120,6 +120,7 @@ export default {
   	this.myapp = this;
     //console.log(countTo);
     this.getList();
+    this.loadAllUser()
   },
   methods: {
   	cleanTask() {

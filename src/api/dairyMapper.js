@@ -30,9 +30,9 @@ export function getDairySubTypeDesp(data) {
     	2 : '题解',
     	10 : '想法',
     	11 : '学习',
-    	30 : '',
-    	31 : '',
-    	32 : ''
+    	30 : '股票',
+    	31 : '未命名1',
+    	32 : '未命名2'
     }
 	return typeMap[data]
 }
