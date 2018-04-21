@@ -56,9 +56,14 @@
 	          {{scope.row.subtype | subtypeFilter}}
 	        </template>
 	    </el-table-column>
-	     <el-table-column label="状态" >
+	    <el-table-column label="状态" >
 	        <template slot-scope="scope">
 	          {{scope.row.status | statusFilter}}
+	        </template>
+	    </el-table-column>
+	    <el-table-column label="最后更新" >
+	        <template slot-scope="scope">
+	          {{scope.row.updatetime | timeFilterWithDesp}}
 	        </template>
 	    </el-table-column>
 	    <el-table-column label="创建时间" >
@@ -151,12 +156,27 @@ export default {
     	} else {
     		return ''
     	}
-    	var d = new Date()
-    	var offset = d.getTimezoneOffset() * 60000;
-        //得到现在的格林尼治时间
-        var utcTime = val + 0;
-        var date = new Date(utcTime + 3600000 * 8);
-        return date.toUTCString()
+    },
+    timeFilterWithDesp(val) {
+    	if (val) {
+    		var timestamp = (new Date()).valueOf()
+    		var dif = timestamp - val
+    		var difDay = parseInt(dif / 1000 / 3600 / 24)
+    		var difHour = parseInt(dif / 1000 / 3600)
+    		var difMinute = parseInt(dif / 1000 / 60)
+    		var desp = ""
+    		if (difDay > 0) {
+    			//desp = '(' + difDay + ' 日之前)'
+    		} else if (difHour > 0){
+    			desp = '(' + difHour + ' 小时之前)'
+    		} else  {
+    			desp = '(' + difMinute + ' 分钟之前)'
+    		}
+    		var txt = formatDate(new Date(val), 'yyyy-MM-dd hh:mm:ss') + desp
+    		return txt
+    	} else {
+    		return ''
+    	}
     },
     typeFilter(val) {
     	return getDairyTypeDesp(val)
