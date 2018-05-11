@@ -32,6 +32,7 @@
 
 <script>
 import { isvalidUsername } from '@/utils/validate'
+import { Message } from 'element-ui'
 
 export default {
   name: 'login',
@@ -52,8 +53,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: 'admin'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -75,11 +76,12 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('Login', this.loginForm).then(() => {
+          this.$store.dispatch('FakeLogin', this.loginForm).then(() => {
             this.loading = false
             this.$router.push({ path: '/' })
           }).catch(() => {
             this.loading = false
+            Message.error('登陆失败')
           })
         } else {
           console.log('error submit!!')

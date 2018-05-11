@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/login'
+import { login, logout, getInfo, fakelogin } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -39,6 +39,20 @@ const user = {
         })
       })
     },
+    FakeLogin({ commit }, userInfo) {
+        const username = userInfo.username.trim()
+        return new Promise((resolve, reject) => {
+        	fakelogin(username, userInfo.password).then(response => {
+                const data = response.data
+                setToken(data.token)
+                commit('SET_TOKEN', data.token)
+                resolve()
+              }).catch(error => {
+            	console.log("Error:" + error)
+                reject(error)
+              })
+        })
+      },
 
     // 获取用户信息
     GetInfo({ commit, state }) {
@@ -54,7 +68,15 @@ const user = {
         })
       })
     },
-
+    GetInfoFake({ commit, state }) {
+       return new Promise((resolve, reject) => {
+          commit('SET_ROLES', 'Admin')
+          commit('SET_NAME', 'DFS')
+          commit('SET_AVATAR', '')
+          resolve()
+       })
+    },
+    
     // 登出
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
