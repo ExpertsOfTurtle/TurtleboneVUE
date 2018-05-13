@@ -139,7 +139,7 @@ export default {
     		checkExpire : 'Y',
     		status : 0,
     		page: 1,
-        	limit: 5
+        	limit: 10
     	},
     	statusOptions : null,
     	typeOpts : null,
