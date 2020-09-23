@@ -23,7 +23,7 @@
 	  <div class="filter-container">
 	  	<el-button type="primary" @click="handleSendReport">发送报告</el-button>
 	  </div>
-	  
+
 	  <el-table v-if="list != null" :data="list" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row>
 	  	<el-table-column align="center" label='ID' width="95">
 	        <template slot-scope="scope">
@@ -55,18 +55,18 @@
 	          {{scope.row.submittime}}
 	        </template>
 	    </el-table-column>
-	    <el-table-column label="Status" >
+	    <el-table-column label="Rating" >
 	        <template slot-scope="scope">
-	          {{scope.row.status | statusFilter}}
+	          {{scope.row.rating}}
 	        </template>
 	    </el-table-column>
 	  </el-table>
-	  
+
 	  <div class="pagination-container">
 	    <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[5,10,20,30,50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total">
 	    </el-pagination>
 	  </div>
-    
+
     <el-dialog title="Report" v-loading.body="reportLoading" :visible.sync="dialogReportVisible">
     	<el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style='width: 400px; margin-left:50px;'>
     		<el-form-item label="From">
@@ -118,7 +118,7 @@ export default {
       total:null,
       listQuery: {
         page: 1,
-        limit: 5,
+        limit: 10,
         username : null,
         status : null,
         result : null
@@ -178,7 +178,7 @@ export default {
 	      	pageSize:that.listQuery.limit
   		}
   		var data = Object.assign(param, this.listQuery)
-  		filterSubmission(data).then(response => {	        
+  		filterSubmission(data).then(response => {
 	        that.listLoading = false
 	        that.list = response.list
 	        that.total = response.total
@@ -191,14 +191,14 @@ export default {
   	loadResult(id) {
   		var that = this;
   		that.listLoading = true
-  		queryBet(id).then(response => {	        
+  		queryBet(id).then(response => {
 	        that.listLoading = false
 	        if (typeof response == "string") {
 	        	that.betResult = null
 	        } else {
 	        	that.betResult = response
 	        }
-	        
+
 	    }).catch(function (error) {
 		    that.listLoading = false
 		})
@@ -206,8 +206,8 @@ export default {
   	syncData() {
   		var that = this
   		that.listLoading = true
-  		syncSubmission().then(response => {	        
-	       that.getList()	        
+  		syncSubmission().then(response => {
+	       that.getList()
 	    }).catch(function (error) {
 		    that.listLoading = false
 		})
@@ -219,7 +219,7 @@ export default {
    	handleInput(row) {
    		this.dialogInputVisible = true
    		this.cfform = Object.assign({}, row) // copy obj
-   		
+
    	},
    	handleCurrentChange(val) {
     	this.listQuery.page = val
@@ -238,7 +238,7 @@ export default {
    		var that = this
    		that.listLoading = true
    		var data = that.cfform
-   		createTask(data).then(response => {	        
+   		createTask(data).then(response => {
 	        that.listLoading = false
 	        that.dialogFormVisible = false
 	    }).catch(function (error) {
@@ -284,9 +284,9 @@ export default {
 			})
 			return
    		}
-   		
-   		this.reportLoading = true 
-   		sendWeeklyReport(data).then(response => {	        
+
+   		this.reportLoading = true
+   		sendWeeklyReport(data).then(response => {
 	        that.reportLoading = false
 	        that.dialogReportVisible = false
 	        that.$message({

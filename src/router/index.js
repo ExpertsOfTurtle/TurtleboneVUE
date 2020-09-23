@@ -7,149 +7,147 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 /* Layout */
-import Layout from '../views/layout/Layout'
+import Layout from '../views/layout/index'
 
 /**
-* hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
-* alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
-*                                if not set alwaysShow, only more than one route under the children
-*                                it will becomes nested mode, otherwise not show the root menu
-* redirect: noredirect           if `redirect:noredirect` will no redirct in the breadcrumb
-* name:'router-name'             the name is used by <keep-alive> (must set!!!)
-* meta : {
+ * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
+ * alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
+ *                                if not set alwaysShow, only more than one route under the children
+ *                                it will becomes nested mode, otherwise not show the root menu
+ * redirect: noredirect           if `redirect:noredirect` will no redirct in the breadcrumb
+ * name:'router-name'             the name is used by <keep-alive> (must set!!!)
+ * meta : {
     title: 'title'               the name show in submenu and breadcrumb (recommend set)
     icon: 'svg-name'             the icon show in the sidebar,
   }
-**/
-export const constantRouterMap = [{
-	path: '/login',
-	component: ()=>import('@/views/login/index'),
-	hidden: true
-},
-{
-	path: '/404',
-	component: ()=>import('@/views/404'),
-	hidden: true
-},
-{
-	path: '/',
-	component: Layout,
-	redirect: '/dashboard',
-	name: 'Dashboard',
-	hidden: true,
-	children: [{
-		path: 'dashboard',
-		component: ()=>import('@/views/dashboard/index')
-	}]
-},
-{
-	path: '/Choice',
-	component: Layout,
-	children: [{
-		path: 'Punish',
-		name: 'Form',
-		component: ()=>import('@/views/choice'),
-		meta: {
-			title: 'Choice',
-			icon: 'form'
-		}
-	}]
-},
-{
-	path: '/Punish',
-	component: Layout,
-	meta: {
-		title: 'Punish',
-		icon: 'example'
-	},
-	redirect: '/turtle/bet',
-	children: [{
-		path: 'bet',
-		name: 'Bet',
-		component: ()=>import('@/views/turtle/bet'),
-		meta: {
-			title: '赌局',
-			icon: 'form'
-		}
-	},{
-		path: 'cf',
-		name: 'CF',
-		component: ()=>import('@/views/turtle/cf'),
-		meta: {
-			title: '罚题',
-			icon: 'form'
-		}
-	}]
-},
-{
-	path: '/Codeforces',
-	component: Layout,
-	meta: {
-		title: 'Codeforces',
-		icon: 'example'
-	},
-	redirect: 'dfs',
-	children: [{
-		path: 'translate',
-		name: 'Translate',
-		component: ()=>import('@/views/turtle/codeforces/create'),
-		meta: {
-			title: '创建翻译',
-			icon: 'form'
-		}
-	},{
-		path: 'Aritical',
-		name: 'Aritical',
-		component: ()=>import('@/views/turtle/codeforces/query'),
-		meta: {
-			title: '已译题目',
-			icon: 'form'
-		}
-	},{
-		path: 'submission',
-		name: 'Submission',
-		component: ()=>import('@/views/turtle/submission'),
-		meta: {
-			title: '提交记录',
-			icon: 'form'
-		}
-	}]
-},
-{
-	path: '/Footstep',
-	component: Layout,
-	meta: {
-		title: 'Footstep',
-		icon: 'example'
-	},
-	redirect: 'nothing',
-	children: [{
-		path: 'CreateFootstep',
-		name: 'CreateFootstep',
-		component: ()=>import('@/views/turtle/footstep/create'),
-		meta: {
-			title: '编辑',
-			icon: 'form'
-		}
-	},{
-		path: 'QueryFootstep',
-		name: 'QueryFootstep',
-		component: ()=>import('@/views/turtle/footstep/query'),
-		meta: {
-			title: '查看',
-			icon: 'form'
-		}
-	}]
-},
-{
-	path: '*',
-	redirect: '/404',
-	hidden: true
-}]
+ **/
+export const constantRoutes = [
+  {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path*',
+        component: () => import('@/views/redirect/index')
+      }
+    ]
+  },
+  {
+    path: '/login',
+    component: () => import('@/views/login/index'),
+    hidden: true
+  },
+  {
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/dashboard',
+    children: [
+      {
+        path: 'dashboard',
+        component: () => import('@/views/dashboard/index'),
+        name: 'Dashboard',
+        meta: { title: 'Dashboard', icon: 'example' }
+      }
+    ]
+  }]
+export const asyncRoutes = [
+  {
+    path: '/Codeforces',
+    component: Layout,
+    meta: {
+      title: 'Codeforces',
+      icon: 'tree'
+    },
+    children: [{
+      path: 'Submissions',
+      name: 'Submissions',
+      component: () => import('@/views/turtlenew/codeforces/submission'),
+      meta: {
+        title: '提交记录',
+        icon: 'form'
+      }
+    }]
+  },
+  {
+    path: '/Sport',
+    component: Layout,
+    meta: {
+      title: 'Sport',
+      icon: 'example'
+    },
+    children: [{
+      path: 'SyncData',
+      name: 'SyncData',
+      component: () => import('@/views/turtlenew/sport/sync/index'),
+      meta: {
+        title: '同步数据',
+        icon: 'form'
+      }
+    }, {
+      path: 'SportTable',
+      name: 'SportTable',
+      component: () => import('@/views/turtlenew/sport/table/index'),
+      meta: {
+        title: '表格',
+        icon: 'form'
+      }
+    }, {
+      path: 'SportCharts',
+      name: 'SportCharts',
+      component: () => import('@/views/turtlenew/sport/charts/index'),
+      meta: {
+        title: '图表',
+        icon: 'form'
+      }
+    }
+    ]
+  },
+  {
+    path: '/Study',
+    component: Layout,
+    meta: {
+      title: '学习',
+      icon: 'example'
+    },
+    children: [{
+      path: 'Liuli',
+      name: 'Liuli',
+      component: () => import('@/views/turtlenew/study/liuli'),
+      meta: {
+        title: '流利英语',
+        icon: 'form'
+      }
+    }, {
+      path: 'SinadxDxj',
+      name: 'SinadxDxj',
+      component: () => import('@/views/turtlenew/study/sinadx/dongxj'),
+      meta: {
+        title: '董小姐',
+        icon: 'form'
+      }
+    }
+    ]
+  }
+]
 
-export default new Router({
-  // mode: 'history', //后端支持可开
+const createRouter = () => new Router({
+  // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouterMap
+  routes: constantRoutes
 })
 
+const router = createRouter()
+
+// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
+export function resetRouter() {
+  const newRouter = createRouter()
+  router.matcher = newRouter.matcher // reset router
+}
+
+export default router

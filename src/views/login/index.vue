@@ -31,14 +31,14 @@
 </template>
 
 <script>
-import { isvalidUsername } from '@/utils/validate'
+import { validUsername } from '@/utils/validate'
 import { Message } from 'element-ui'
 
 export default {
   name: 'login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
+      if (!validUsername(value)) {
         callback(new Error('请输入正确的用户名'))
       } else {
         callback()
@@ -76,7 +76,7 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('FakeLogin', this.loginForm).then(() => {
+          this.$store.dispatch('user/FakeLogin', this.loginForm).then(() => {
             this.loading = false
             this.$router.push({ path: '/' })
           }).catch(() => {
